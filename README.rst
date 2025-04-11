@@ -38,17 +38,8 @@ or individual libraries can be installed using
 
 
 
-.. todo:: Describe the Adafruit product this library works with. For PCBs, you can also add the
-image from the assets folder in the PCB's GitHub repo.
-
-`Purchase one from the Adafruit shop <http://www.adafruit.com/products/>`_
-
 Installing from PyPI
 =====================
-.. note:: This library is not available on PyPI yet. Install documentation is included
-   as a standard element. Stay tuned for PyPI availability!
-
-.. todo:: Remove the above note if PyPI version is/will be available at time of release.
 
 On supported GNU/Linux systems like the Raspberry Pi, you can install the driver locally `from
 PyPI <https://pypi.org/project/adafruit-circuitpython-anchored-group/>`_.
@@ -99,8 +90,45 @@ Or the following command to update an existing version:
 Usage Example
 =============
 
-.. todo:: Add a quick, simple example. It and other examples should live in the
-examples folder and be included in docs/examples.rst.
+.. code-block:: python
+
+    from adafruit_anchored_group import AnchoredGroup
+    from displayio import Group, Bitmap, TileGrid, Palette
+    from adafruit_display_text.bitmap_label import Label
+    import supervisor
+    import terminalio
+
+    display = supervisor.runtime.display
+
+    main_group = Group()
+
+    display.root_group = main_group
+
+    anchored_group = AnchoredGroup()
+
+    icon_bmp = Bitmap(30,30, 1)
+    icon_palette = Palette(1)
+    icon_palette[0] = 0xff00ff
+    icon_tg = TileGrid(bitmap=icon_bmp, pixel_shader=icon_palette)
+
+    lbl = Label(terminalio.FONT, text="Something")
+    lbl.anchor_point = (0, 0.5)
+    lbl.anchored_position = (icon_tg.x + (icon_tg.width * icon_tg.tile_width) + 6,
+                             (icon_tg.y + (icon_tg.height * icon_tg.tile_height)) //2)
+
+
+    anchored_group.append(icon_tg)
+    anchored_group.append(lbl)
+    print(f"group size: {anchored_group.size}")
+
+    anchored_group.anchor_point = (1.0, 0)
+    anchored_group.anchored_position = (display.width-4, 0)
+
+    main_group.append(anchored_group)
+
+    while True:
+        pass
+
 
 Documentation
 =============
